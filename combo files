@@ -30,5 +30,5 @@ public int clearRows() {
         }
         boolean[][] k = new boolean[width][height];
         tetrisGrid = grid.toArray(k);
-        return total;
+        return total*total;
     }
