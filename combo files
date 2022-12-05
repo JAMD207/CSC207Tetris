@@ -1,0 +1,34 @@
+/**
+Basically from the assignment2 we only have the total score to return, but in this function I mutated the return of total to return the sqaure of total. This will give
+users more credits so that they will be more willing to clear more lines at one time.
+*/
+public int clearRows() {
+        int total = 0;
+        ArrayList<boolean[]> grid = new ArrayList<>();
+        for (int i = 0; i < rowCounts.length; i++){
+            if (rowCounts[i] != width){
+                ArrayList<Boolean> line = new ArrayList<>();
+                for (int p = 0; p < width; p++){
+                    line.add(tetrisGrid[p][i]);
+                }
+                boolean[] line2 = new boolean[width];
+                for (int l = 0; l < line.size(); l++){
+                    line2[l] = line.get(l);
+                }
+                grid.add(line2);
+            }
+            else{
+                total += 1;
+            }
+        }
+        for (int j = 0; j < total; j++){
+            boolean[] t = new boolean[width];
+            for (int k = 0; k < width; k++){
+                t[k] = false;
+            }
+            grid.add(t);
+        }
+        boolean[][] k = new boolean[width][height];
+        tetrisGrid = grid.toArray(k);
+        return total;
+    }
