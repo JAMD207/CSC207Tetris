@@ -1,0 +1,14 @@
+void testClearRows() {
+        TetrisBoard board = new TetrisBoard(10,24); board.commit();
+        TetrisPiece pieceA = new TetrisPiece(TetrisPiece.SQUARE_STR);
+
+        //fill two rows completely
+        int retval = board.placePiece(pieceA, 0,0); board.commit();
+        retval = board.placePiece(pieceA, 2,0); board.commit();
+        retval = board.placePiece(pieceA, 4,0); board.commit();
+        retval = board.placePiece(pieceA, 6,0); board.commit();
+        retval = board.placePiece(pieceA, 8,0);
+
+        int rcleared = board.clearRows();
+        assertEquals(4, rcleared);
+    }
