@@ -195,8 +195,7 @@ public class TetrisView {
         slowButton.setFont(new Font(12));
         slowButton.setStyle(buttons);
 
-        HBox controls = new HBox(20, saveButton, loadButton, newButton, startButton, stopButton, slowButton,
-                ProtanopiaButton,DeuteranopiaButton,TritanopiaButton, Normalbutton);
+        HBox controls = new HBox(20, saveButton, loadButton, newButton, startButton, stopButton, slowButton);
         controls.setPadding(new Insets(20, 20, 20, 20));
         controls.setAlignment(Pos.CENTER);
 
@@ -208,7 +207,8 @@ public class TetrisView {
         vBox.setPadding(new Insets(20, 20, 20, 20));
         vBox.setAlignment(Pos.TOP_CENTER);
 
-        VBox scoreBox = new VBox(20, scoreLabel, gameModeLabel, pilotButtonHuman, pilotButtonComputer);
+        VBox scoreBox = new VBox(20, scoreLabel, gameModeLabel, pilotButtonHuman, pilotButtonComputer,
+                                        ProtanopiaButton,DeuteranopiaButton,TritanopiaButton, Normalbutton);
         scoreBox.setPadding(new Insets(20, 20, 20, 20));
         vBox.setAlignment(Pos.TOP_CENTER);
 
@@ -448,6 +448,15 @@ public class TetrisView {
         return( ((float)(this.height-2)) / this.model.getBoard().getHeight() );
     }
 
+
+    public int hieghty(int x, int y){
+        for(int i = 1; y-i >0;i++){
+            if(this.model.getBoard().getGrid(x, y-i)){
+                return y-i;
+            }
+        }
+        return 0;
+    }
 
     /**
      * Draw the board
