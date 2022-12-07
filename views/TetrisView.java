@@ -20,6 +20,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import model.TetrisPiece;
+import model.TetrisPoint;
+
+import java.util.Arrays;
 
 
 /**
@@ -43,6 +47,14 @@ public class TetrisView {
     Boolean paused;
     Timeline timeline;
 
+    Color main; //main colour
+    Color pieces; //tetris pieces colour
+    Color ghost; //ghost piece colour
+    String text; // text colour
+    String buttons; //button colour
+    String sliderr; //slider colour
+    Button ProtanopiaButton, DeuteranopiaButton, TritanopiaButton, Normalbutton;
+
     int pieceWidth = 20; //width of block on display
     private double width; //height and width of canvas
     private double height;
@@ -57,7 +69,24 @@ public class TetrisView {
     public TetrisView(TetrisModel model, Stage stage) {
         this.model = model;
         this.stage = stage;
+        Colour();
         initUI();
+    }
+
+
+    /**
+     * Constructor
+     * for colour
+     */
+    public void Colour() {
+        // normal palette
+        //initializer for colour
+        this.main = Color.GREEN;
+        this.pieces = Color.RED;
+        this.ghost = Color.PURPLE;
+        this.text = "-fx-text-fill: #e8e6e3";
+        this.buttons = "-fx-background-color: #17871b; -fx-text-fill: white;";
+        this.sliderr = "-fx-control-inner-background: palegreen;";
     }
 
     /**
@@ -84,7 +113,7 @@ public class TetrisView {
         gameModeLabel.setText("Player is: Human");
         gameModeLabel.setMinWidth(250);
         gameModeLabel.setFont(new Font(20));
-        gameModeLabel.setStyle("-fx-text-fill: #e8e6e3");
+        gameModeLabel.setStyle(text);
 
         final ToggleGroup toggleGroup = new ToggleGroup();
 
@@ -93,62 +122,87 @@ public class TetrisView {
         pilotButtonHuman.setSelected(true);
         pilotButtonHuman.setUserData(Color.SALMON);
         pilotButtonHuman.setFont(new Font(16));
-        pilotButtonHuman.setStyle("-fx-text-fill: #e8e6e3");
+        pilotButtonHuman.setStyle(text);
 
         RadioButton pilotButtonComputer = new RadioButton("Computer (Default)");
         pilotButtonComputer.setToggleGroup(toggleGroup);
         pilotButtonComputer.setUserData(Color.SALMON);
         pilotButtonComputer.setFont(new Font(16));
-        pilotButtonComputer.setStyle("-fx-text-fill: #e8e6e3");
+        pilotButtonComputer.setStyle(text);
 
         scoreLabel.setText("Score is: 0");
         scoreLabel.setFont(new Font(20));
-        scoreLabel.setStyle("-fx-text-fill: #e8e6e3");
+        scoreLabel.setStyle(text);
 
         //add buttons
+        Normalbutton = new Button("Normal");
+        Normalbutton.setId("Normal");
+        Normalbutton.setPrefSize(150, 50);
+        Normalbutton.setFont(new Font(12));
+        Normalbutton.setStyle(buttons);
+
+        TritanopiaButton = new Button("Tritanopia");
+        TritanopiaButton.setId("Tritanopia");
+        TritanopiaButton.setPrefSize(150, 50);
+        TritanopiaButton.setFont(new Font(12));
+        TritanopiaButton.setStyle(buttons);
+
+        DeuteranopiaButton = new Button("Deuteranopia");
+        DeuteranopiaButton.setId("Deuteranopia");
+        DeuteranopiaButton.setPrefSize(150, 50);
+        DeuteranopiaButton.setFont(new Font(12));
+        DeuteranopiaButton.setStyle(buttons);
+
+        ProtanopiaButton = new Button("Protanopia");
+        ProtanopiaButton.setId("Protanopia");
+        ProtanopiaButton.setPrefSize(150, 50);
+        ProtanopiaButton.setFont(new Font(12));
+        ProtanopiaButton.setStyle(buttons);
+
         startButton = new Button("Start");
         startButton.setId("Start");
         startButton.setPrefSize(150, 50);
         startButton.setFont(new Font(12));
-        startButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        startButton.setStyle(buttons);
 
         stopButton = new Button("Stop");
         stopButton.setId("Start");
         stopButton.setPrefSize(150, 50);
         stopButton.setFont(new Font(12));
-        stopButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        stopButton.setStyle(buttons);
 
         saveButton = new Button("Save");
         saveButton.setId("Save");
         saveButton.setPrefSize(150, 50);
         saveButton.setFont(new Font(12));
-        saveButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        saveButton.setStyle(buttons);
 
         loadButton = new Button("Load");
         loadButton.setId("Load");
         loadButton.setPrefSize(150, 50);
         loadButton.setFont(new Font(12));
-        loadButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        loadButton.setStyle(buttons);
 
         newButton = new Button("New Game");
         newButton.setId("New");
         newButton.setPrefSize(150, 50);
         newButton.setFont(new Font(12));
-        newButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        newButton.setStyle(buttons);
 
         slowButton = new Button("Slow");
         slowButton.setId("Slow");
         slowButton.setPrefSize(150, 50);
         slowButton.setFont(new Font(12));
-        slowButton.setStyle("-fx-background-color: #17871b; -fx-text-fill: white;");
+        slowButton.setStyle(buttons);
 
-        HBox controls = new HBox(20, saveButton, loadButton, newButton, startButton, stopButton, slowButton);
+        HBox controls = new HBox(20, saveButton, loadButton, newButton, startButton, stopButton, slowButton,
+                ProtanopiaButton,DeuteranopiaButton,TritanopiaButton, Normalbutton);
         controls.setPadding(new Insets(20, 20, 20, 20));
         controls.setAlignment(Pos.CENTER);
 
         Slider slider = new Slider(0, 100, 50);
         slider.setShowTickLabels(true);
-        slider.setStyle("-fx-control-inner-background: palegreen;");
+        slider.setStyle(sliderr);
 
         VBox vBox = new VBox(20, slider);
         vBox.setPadding(new Insets(20, 20, 20, 20));
@@ -176,6 +230,90 @@ public class TetrisView {
             }
             borderPane.requestFocus();
                 });
+
+        //colour options for the game
+        Normalbutton.setOnAction(e -> {
+            this.main = Color.GREEN;
+            this.pieces = Color.RED;
+            this.ghost = Color.PURPLE;
+            this.text = "-fx-text-fill: #e8e6e3";
+            this.buttons = "-fx-background-color: #17871b; -fx-text-fill: white;";
+            TritanopiaButton.setStyle(buttons);
+            DeuteranopiaButton.setStyle(buttons);
+            ProtanopiaButton.setStyle(buttons);
+            Normalbutton.setStyle(buttons);
+            startButton.setStyle(buttons);
+            stopButton.setStyle(buttons);
+            loadButton.setStyle(buttons);
+            saveButton.setStyle(buttons);
+            newButton.setStyle(buttons);
+            slowButton.setStyle(buttons);
+            slider.setStyle("-fx-control-inner-background: palegreen;");
+            borderPane.requestFocus();
+        });
+
+        TritanopiaButton.setOnAction(e -> {
+            this.main = Color.TEAL;
+            this.pieces = Color.RED;
+            this.ghost = Color.SLATEGREY;
+            this.text = "-fx-text-fill: #e8e6e3";
+            this.buttons = "-fx-background-color: #a593b6; -fx-text-fill: white;";
+            TritanopiaButton.setStyle(buttons);
+            DeuteranopiaButton.setStyle(buttons);
+            ProtanopiaButton.setStyle(buttons);
+            Normalbutton.setStyle(buttons);
+            startButton.setStyle(buttons);
+            stopButton.setStyle(buttons);
+            loadButton.setStyle(buttons);
+            saveButton.setStyle(buttons);
+            newButton.setStyle(buttons);
+            slowButton.setStyle(buttons);
+            slider.setStyle("-fx-control-inner-background: THISTLE;");
+            borderPane.requestFocus();
+        });
+
+        DeuteranopiaButton.setOnAction(e -> {
+            this.main = Color.CORNFLOWERBLUE;
+            this.pieces = Color.GOLD;
+            this.ghost = Color.GOLDENROD;
+            this.text = "-fx-text-fill: #e8e6e3";
+            this.buttons = "-fx-background-color: #ffe132; -fx-text-fill: white;";
+            this.sliderr = "-fx-control-inner-background: PAPAYAWHIP;";
+            TritanopiaButton.setStyle(buttons);
+            DeuteranopiaButton.setStyle(buttons);
+            ProtanopiaButton.setStyle(buttons);
+            Normalbutton.setStyle(buttons);
+            startButton.setStyle(buttons);
+            stopButton.setStyle(buttons);
+            loadButton.setStyle(buttons);
+            saveButton.setStyle(buttons);
+            newButton.setStyle(buttons);
+            slowButton.setStyle(buttons);
+            slider.setStyle(sliderr);
+            borderPane.requestFocus();
+        });
+
+        ProtanopiaButton.setOnAction(e -> {
+            this.main = Color.CYAN;
+            this.pieces = Color.HOTPINK;
+            this.ghost = Color.SALMON;
+            this.text = "-fx-text-fill: #e8e6e3";
+            this.buttons = "-fx-background-color: #24f25b; -fx-text-fill: white;";
+            this.sliderr = "-fx-control-inner-background: LIGHTSTEELBLUE;";
+            TritanopiaButton.setStyle(buttons);
+            DeuteranopiaButton.setStyle(buttons);
+            ProtanopiaButton.setStyle(buttons);
+            Normalbutton.setStyle(buttons);
+            startButton.setStyle(buttons);
+            stopButton.setStyle(buttons);
+            loadButton.setStyle(buttons);
+            saveButton.setStyle(buttons);
+            newButton.setStyle(buttons);
+            slowButton.setStyle(buttons);
+            slider.setStyle(sliderr);
+            borderPane.requestFocus();
+        });
+
 
         //configure this such that you start a new game when the user hits the newButton
         //Make sure to return the focus to the borderPane once you're done!
@@ -310,14 +448,15 @@ public class TetrisView {
         return( ((float)(this.height-2)) / this.model.getBoard().getHeight() );
     }
 
+
     /**
      * Draw the board
      */
     public void paintBoard() {
 
         // Draw a rectangle around the whole screen
-        gc.setStroke(Color.GREEN);
-        gc.setFill(Color.GREEN);
+        gc.setStroke(main);
+        gc.setFill(main);
         gc.fillRect(0, 0, this.width-1, this.height-1);
 
         // Draw the line separating the top area on the screen
@@ -329,8 +468,8 @@ public class TetrisView {
         final int dx = Math.round(dX()-2);
         final int dy = Math.round(dY()-2);
         final int bWidth = this.model.getBoard().getWidth();
-
         int x, y;
+
         // Loop through and draw all the blocks; sizes of blocks are calibrated relative to screen size
         for (x=0; x<bWidth; x++) {
             int left = xPixel(x);	// the left pixel
@@ -338,9 +477,9 @@ public class TetrisView {
             final int yHeight = this.model.getBoard().getHeight();
             for (y=0; y<yHeight; y++) {
                 if (this.model.getBoard().getGrid(x, y)) {
-                    gc.setFill(Color.RED);
+                    gc.setFill(pieces);
                     gc.fillRect(left+1, yPixel(y)+1, dx, dy);
-                    gc.setFill(Color.GREEN);
+                    gc.setFill(main);
                 }
             }
         }
