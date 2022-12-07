@@ -3,6 +3,7 @@ package model;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
@@ -191,36 +192,32 @@ public class TetrisBoard implements Serializable{
         }
         int count = 0;
         int rows = 0;
-        int count2;
         TetrisPoint[] bdy = piece.getBody();
         int bsize = bdy.length;
-        while (count < bsize) {
-            if (y + bdy[count].y >= height) {
+        for(int i = 0; i < bsize; i++){
+            if (y + bdy[i].y >= height || x + bdy[i].x >= width) {
                 return ADD_OUT_BOUNDS;
             }
-            if (tetrisGrid[x + bdy[count].x][y + bdy[count].y]) {
+            if (tetrisGrid[x + bdy[i].x][y + bdy[i].y]) {
                 return ADD_BAD;
             }
-            tetrisGrid[x + bdy[count].x][y + bdy[count].y] = true;
-            count2 = 0;
-            rowCounts[y+bdy[count].y] = rowCounts[y+bdy[count].y] + 1;
-            colCounts[x+bdy[count].x] = colCounts[x+bdy[count].x] + 1;
+            tetrisGrid[x + bdy[i].x][y + bdy[i].y] = true;
             boolean cleared = true;
-            while (count2 < width) {
-                if (!(tetrisGrid[count2][y + bdy[count].y])) {
-                    cleared = false;
-                    break;
-                }
-                count2 = count2 + 1;
-            }
-            if (cleared) {
-                rows = 1;
-            }
-            count = count + 1;
         }
-        if (rows > 0) {
-
-            return ADD_ROW_FILLED;
+        Arrays.fill(rowCounts, 0);
+        Arrays.fill(colCounts, 0);
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                if(tetrisGrid[i][j]){
+                    rowCounts[j] += 1;
+                    colCounts[i] += 1;
+                }
+            }
+        }
+        for(int i = 0; i < rowCounts.length; i++){
+            if(rowCounts[i] == 10){
+                return ADD_ROW_FILLED;
+            }
         }
 
         return ADD_OK;
@@ -233,39 +230,34 @@ public class TetrisBoard implements Serializable{
      * @return number of rows cleared (useful for scoring)
      */
     public int clearRows() {
-         int nrows = 0;
-         int count = 0;
-         boolean crow;
-         int count2;
-         int count3;
-         int count4;
-         while (count < height) {
-             crow = true;
-             count2 = 0;
-             while (count2 < width) {
-                 if (!(tetrisGrid[count2][count])) {
-                     crow = false;
-                 }
-             if (crow) {
-                 count3 = count + 1;
-                 while (count3 < height) {
-                     count4 = 0;
-                     while (count4 < width) {
-                         tetrisGrid[count4][count3-1] = tetrisGrid[count4][count3];
-                         colCounts[count4] = colCounts[count4] - 1;
-                         count4 = count4 + 1;
-                        }
-                     rowCounts[count3-1] = rowCounts[count3];
-                     count3 = count3 + 1;
+        ArrayList<Integer> lines = new ArrayList<>();
+        for(int i = 0; i < height; i++){
+            if(rowCounts[i] == 10){
+                lines.add(i);
+            }
+        }
+        int cleared = 0;
+        boolean clear = false;
+        for(int i = height - 1; i >= 0; i--){
+            if(lines.contains(i)){
+                cleared++;
+                clear = true;
+            }
+            for(int row = i; row < height; row++){
+                for(int col = 0; col < width; col++){
+                    if(row + cleared > 23){
+                        tetrisGrid[col][row] = false;
                     }
-                    nrows = nrows + 1;
-                 }
-                 count2 = count2 + 1;
-             }
-           count = count + 1;
-         }
-         return nrows;
+                    else if (clear){
+                        tetrisGrid[col][row] = tetrisGrid[col][row + 1];
+                    }
+                }
+            }
+            clear = false;
+        }
+        return cleared;
     }
+
 
     /**
      * Reverts the board to its state before up to one call to placePiece() and one to clearRows();
