@@ -35,7 +35,8 @@ public class TetrisView {
 
     TetrisModel model; //reference to model
     Stage stage;
-    boolean slow;
+    boolean slow; //checks whether the game is in slow mode
+
     Button startButton, stopButton, loadButton, saveButton, newButton, slowButton; //buttons for functions
     Label scoreLabel = new Label("");
     Label gameModeLabel = new Label("");
@@ -219,17 +220,18 @@ public class TetrisView {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        slow = false;
         slowButton.setOnAction(e -> {
             if (!(slow)) {
                 timeline.setRate(0.2);
                 slow = true;
+                slowButton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             } else {
                 timeline.setRate(1);
                 slow = false;
+                slowButton.setStyle(buttons);
             }
             borderPane.requestFocus();
-                });
+        });
 
         //colour options for the game
         Normalbutton.setOnAction(e -> {
