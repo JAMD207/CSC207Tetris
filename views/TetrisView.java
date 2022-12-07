@@ -139,7 +139,7 @@ public class TetrisView {
         Normalbutton.setId("Normal");
         Normalbutton.setPrefSize(150, 50);
         Normalbutton.setFont(new Font(12));
-        Normalbutton.setStyle(buttons);
+        Normalbutton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
 
         TritanopiaButton = new Button("Tritanopia");
         TritanopiaButton.setId("Tritanopia");
@@ -241,7 +241,7 @@ public class TetrisView {
             TritanopiaButton.setStyle(buttons);
             DeuteranopiaButton.setStyle(buttons);
             ProtanopiaButton.setStyle(buttons);
-            Normalbutton.setStyle(buttons);
+            Normalbutton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             startButton.setStyle(buttons);
             stopButton.setStyle(buttons);
             loadButton.setStyle(buttons);
@@ -258,7 +258,7 @@ public class TetrisView {
             this.ghost = Color.SLATEGREY;
             this.text = "-fx-text-fill: #e8e6e3";
             this.buttons = "-fx-background-color: #a593b6; -fx-text-fill: white;";
-            TritanopiaButton.setStyle(buttons);
+            TritanopiaButton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             DeuteranopiaButton.setStyle(buttons);
             ProtanopiaButton.setStyle(buttons);
             Normalbutton.setStyle(buttons);
@@ -280,7 +280,7 @@ public class TetrisView {
             this.buttons = "-fx-background-color: #ffe132; -fx-text-fill: white;";
             this.sliderr = "-fx-control-inner-background: PAPAYAWHIP;";
             TritanopiaButton.setStyle(buttons);
-            DeuteranopiaButton.setStyle(buttons);
+            DeuteranopiaButton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             ProtanopiaButton.setStyle(buttons);
             Normalbutton.setStyle(buttons);
             startButton.setStyle(buttons);
@@ -302,7 +302,7 @@ public class TetrisView {
             this.sliderr = "-fx-control-inner-background: LIGHTSTEELBLUE;";
             TritanopiaButton.setStyle(buttons);
             DeuteranopiaButton.setStyle(buttons);
-            ProtanopiaButton.setStyle(buttons);
+            ProtanopiaButton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             Normalbutton.setStyle(buttons);
             startButton.setStyle(buttons);
             stopButton.setStyle(buttons);
@@ -448,15 +448,10 @@ public class TetrisView {
         return( ((float)(this.height-2)) / this.model.getBoard().getHeight() );
     }
 
+    /**
+     * find the maximum height in the column below the tetris piece
+     */
 
-    public int hieghty(int x, int y){
-        for(int i = 1; y-i >0;i++){
-            if(this.model.getBoard().getGrid(x, y-i)){
-                return y-i;
-            }
-        }
-        return 0;
-    }
 
     /**
      * Draw the board
@@ -478,6 +473,8 @@ public class TetrisView {
         final int dy = Math.round(dY()-2);
         final int bWidth = this.model.getBoard().getWidth();
         int x, y;
+
+
 
         // Loop through and draw all the blocks; sizes of blocks are calibrated relative to screen size
         for (x=0; x<bWidth; x++) {
