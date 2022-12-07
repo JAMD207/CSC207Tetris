@@ -451,7 +451,14 @@ public class TetrisView {
     /**
      * find the maximum height in the column below the tetris piece
      */
-
+    public int height_y(int x, int y){
+        for(int i = 1; y-i >0;i++){
+            if(this.model.getBoard().getGrid(x, y-i)){
+                return y-i;
+            }
+        }
+        return 0;
+    }
 
     /**
      * Draw the board
