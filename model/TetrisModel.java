@@ -16,8 +16,11 @@ public class TetrisModel implements Serializable {
     protected TetrisPiece[] pieces; // Pieces to be places on the board
     protected TetrisPiece currentPiece; //Piece we are currently placing
     protected TetrisPiece newPiece; //next piece to be placed
+    protected TetrisPiece holdingPiece; //holding piece
+    protected Boolean holding; //checks to see if player already held the piece
     protected int count;		 // how many pieces played so far
     protected int score; //the player's score
+    protected int lines; //amount of lines cleared
 
     protected int currentX, newX;
     protected int currentY, newY;
@@ -46,6 +49,7 @@ public class TetrisModel implements Serializable {
         autoPilotMode = false;
         gameOn = false;
         pilot = new AutoPilot();
+        holding = false;
     }
 
 
@@ -58,6 +62,7 @@ public class TetrisModel implements Serializable {
         gameOn = true;
         score = 0;
         count = 0;
+        holdingPiece = null;
     }
 
     /**
@@ -67,6 +72,16 @@ public class TetrisModel implements Serializable {
      */
     public TetrisBoard getBoard() {
         return this.board;
+    }
+
+    /**
+     * get the current piece
+     *
+     * @return  currentPiece
+     */
+    public TetrisPiece getpiece() {
+        return this.currentPiece;
+
     }
 
     /**
@@ -111,6 +126,39 @@ public class TetrisModel implements Serializable {
     }
 
     /**
+     * Holds the piece for the user to keep for a different turn
+     * Cannot go back and forth between holding piece adn current piece more than once
+     */
+    public void holdPiece() {
+        if(!holding) {
+            board.undo();
+            if(holdingPiece == null){
+                holdingPiece = newPiece;
+                addNewPiece();
+            }
+            else{
+                TetrisPiece temp = newPiece;
+                newPiece = holdingPiece;
+                holdingPiece = temp;
+
+                board.commit();
+                currentPiece = null;
+                int px = (board.getWidth() - newPiece.getWidth())/2;
+                int py = board.getHeight() - newPiece.getHeight();
+
+                int result = setCurrent(newPiece, px, py);
+
+                if (result > TetrisBoard.ADD_ROW_FILLED) {
+                    stopGame(); //oops, we lost.
+                }
+            }
+            count++;
+            --score;
+            holding = true;
+        }
+    }
+
+    /**
      * Put new piece in play on board 
      */
     public void addNewPiece() {
@@ -143,6 +191,15 @@ public class TetrisModel implements Serializable {
         pieceNum = (int) (pieces.length * random.nextDouble());
         TetrisPiece piece	 = pieces[pieceNum];
         return(piece);
+    }
+
+    /**
+     * Get current x
+     *
+     * @return current
+     */
+    public int getCurrentX() {
+        return this.currentX;
     }
 
     /**
@@ -288,6 +345,7 @@ public class TetrisModel implements Serializable {
                     case 4: score += 40;  break;
                     default: score += 50;
                 }
+                lines += cleared;
             }
 
             // if the board is too tall, we've lost!
@@ -297,6 +355,7 @@ public class TetrisModel implements Serializable {
 
             // Otherwise, add a new piece and keep playing
             else {
+                holding = false;
                 addNewPiece();
             }
         }

@@ -1,13 +1,15 @@
+
 // TetrisBoard.java
 package model;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
-/** Represents a Board class for Tetris.  
+/** Represents a Board class for Tetris.
  * Based on the Tetris assignment in the Nifty Assignments Database, authored by Nick Parlante
  */
 public class TetrisBoard implements Serializable{
@@ -144,32 +146,16 @@ public class TetrisBoard implements Serializable{
      * @return the y value where the piece will come to rest
      */
     public int placementHeight(TetrisPiece piece, int x) {
-        int[] ypiece = piece.getLowestYVals();
-        int[] hcalc = new int[ypiece.length];
-        int count = 0;
-        while (count < ypiece.length) {
-            hcalc[count] = this.getColumnHeight(count) - ypiece[count];
-            count = count + 1;
-        }
-        int maxindex = 0;
-        int maxval = hcalc[0];
-        count = 0;
-        while (count < hcalc.length) {
-            if (hcalc[count] > maxval) {
-                maxval = hcalc[count];
-                maxindex = count;
-            }
-            count = count + 1;
-        }
-        return colCounts[maxindex];
-
+        int y = getColumnHeight(x);
+        int[] lowY = piece.getLowestYVals();
+        return y - lowY[0];
     }
 
     /**
      * Attempts to add the body of a piece to the board. Copies the piece blocks into the board grid.
      * Returns ADD_OK for a regular placement, or ADD_ROW_FILLED
-     * for a regular placement that causes at least one row to be filled. 
-     * 
+     * for a regular placement that causes at least one row to be filled.
+     *
      * Error cases:
      * A placement may fail in two ways. First, if part of the piece may fall out
      * of bounds of the board, ADD_OUT_BOUNDS is returned.
@@ -177,7 +163,7 @@ public class TetrisBoard implements Serializable{
      * in which case ADD_BAD is returned.
      * In both error cases, the board may be left in an invalid
      * state. The client can use undo(), to recover the valid, pre-place state.
-     * 
+     *
      * @param piece piece to place
      * @param x placement position, x
      * @param y placement position, y
@@ -191,36 +177,32 @@ public class TetrisBoard implements Serializable{
         }
         int count = 0;
         int rows = 0;
-        int count2;
         TetrisPoint[] bdy = piece.getBody();
         int bsize = bdy.length;
-        while (count < bsize) {
-            if (y + bdy[count].y >= height) {
+        for(int i = 0; i < bsize; i++){
+            if (y + bdy[i].y >= height || x + bdy[i].x >= width) {
                 return ADD_OUT_BOUNDS;
             }
-            if (tetrisGrid[x + bdy[count].x][y + bdy[count].y]) {
+            if (tetrisGrid[x + bdy[i].x][y + bdy[i].y]) {
                 return ADD_BAD;
             }
-            tetrisGrid[x + bdy[count].x][y + bdy[count].y] = true;
-            count2 = 0;
-            rowCounts[y+bdy[count].y] = rowCounts[y+bdy[count].y] + 1;
-            colCounts[x+bdy[count].x] = colCounts[x+bdy[count].x] + 1;
+            tetrisGrid[x + bdy[i].x][y + bdy[i].y] = true;
             boolean cleared = true;
-            while (count2 < width) {
-                if (!(tetrisGrid[count2][y + bdy[count].y])) {
-                    cleared = false;
-                    break;
-                }
-                count2 = count2 + 1;
-            }
-            if (cleared) {
-                rows = 1;
-            }
-            count = count + 1;
         }
-        if (rows > 0) {
-
-            return ADD_ROW_FILLED;
+        Arrays.fill(rowCounts, 0);
+        Arrays.fill(colCounts, 0);
+        for(int i = 0; i < width; i++){
+            for(int j = 0; j < height; j++){
+                if(tetrisGrid[i][j]){
+                    rowCounts[j] += 1;
+                    colCounts[i] += 1;
+                }
+            }
+        }
+        for(int i = 0; i < rowCounts.length; i++){
+            if(rowCounts[i] == 10){
+                return ADD_ROW_FILLED;
+            }
         }
 
         return ADD_OK;
@@ -229,43 +211,38 @@ public class TetrisBoard implements Serializable{
     /**
      * Deletes rows that are filled all the way across, moving
      * things above down. Returns the number of rows cleared.
-     * 
+     *
      * @return number of rows cleared (useful for scoring)
      */
     public int clearRows() {
-         int nrows = 0;
-         int count = 0;
-         boolean crow;
-         int count2;
-         int count3;
-         int count4;
-         while (count < height) {
-             crow = true;
-             count2 = 0;
-             while (count2 < width) {
-                 if (!(tetrisGrid[count2][count])) {
-                     crow = false;
-                 }
-             if (crow) {
-                 count3 = count + 1;
-                 while (count3 < height) {
-                     count4 = 0;
-                     while (count4 < width) {
-                         tetrisGrid[count4][count3-1] = tetrisGrid[count4][count3];
-                         colCounts[count4] = colCounts[count4] - 1;
-                         count4 = count4 + 1;
-                        }
-                     rowCounts[count3-1] = rowCounts[count3];
-                     count3 = count3 + 1;
+        ArrayList<Integer> lines = new ArrayList<>();
+        for(int i = 0; i < height; i++){
+            if(rowCounts[i] == 10){
+                lines.add(i);
+            }
+        }
+        int cleared = 0;
+        boolean clear = false;
+        for(int i = height - 1; i >= 0; i--){
+            if(lines.contains(i)){
+                cleared++;
+                clear = true;
+            }
+            for(int row = i; row < height; row++){
+                for(int col = 0; col < width; col++){
+                    if(row + cleared > 23){
+                        tetrisGrid[col][row] = false;
                     }
-                    nrows = nrows + 1;
-                 }
-                 count2 = count2 + 1;
-             }
-           count = count + 1;
-         }
-         return nrows;
+                    else if (clear){
+                        tetrisGrid[col][row] = tetrisGrid[col][row + 1];
+                    }
+                }
+            }
+            clear = false;
+        }
+        return cleared;
     }
+
 
     /**
      * Reverts the board to its state before up to one call to placePiece() and one to clearRows();
@@ -330,7 +307,7 @@ public class TetrisBoard implements Serializable{
 
     /**
      * Print the board
-     * 
+     *
      * @return a string representation of the board (useful for debugging)
      */
     public String toString() {
@@ -348,6 +325,6 @@ public class TetrisBoard implements Serializable{
     }
 
 
-}
 
+}
 
