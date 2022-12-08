@@ -75,21 +75,13 @@ public class TetrisModel implements Serializable {
     }
 
     /**
-     * Holding Piece getter
+     * get the current piece
      *
-     * @return  holding piece
+     * @return  currentPiece
      */
-    public TetrisPiece getHoldingPiece() {
-        return this.holdingPiece;
-    }
+    public TetrisPiece getpiece() {
+        return this.currentPiece;
 
-    /**
-     * Board Lines Cleared getter
-     *
-     * @return  lines cleared
-     */
-    public int getLinesCleared() {
-        return this.lines;
     }
 
     /**
@@ -199,6 +191,15 @@ public class TetrisModel implements Serializable {
         pieceNum = (int) (pieces.length * random.nextDouble());
         TetrisPiece piece	 = pieces[pieceNum];
         return(piece);
+    }
+
+    /**
+     * Get current x
+     *
+     * @return current
+     */
+    public int getCurrentX() {
+        return this.currentX;
     }
 
     /**

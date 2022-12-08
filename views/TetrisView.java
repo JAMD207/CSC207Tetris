@@ -479,7 +479,23 @@ public class TetrisView {
         final int bWidth = this.model.getBoard().getWidth();
         int x, y;
 
+        // this will draw the ghost function
+        TetrisPiece p = this.model.getpiece();
+        int highestY = 0;
+        int[] lowY = p.getLowestYVals();
+        for(TetrisPoint tp: p.getBody()){
+            int placeY = this.model.getBoard().placementHeight(p, this.model.getCurrentX()+tp.x) + lowY[tp.x];
+            if(placeY > highestY){
+                highestY = placeY;
+            }
 
+        }
+        highestY -= p.getHeight();
+        for (TetrisPoint tp: p.getBody()){
+            gc.setFill(ghost);
+            gc.fillRect(180 -(this.model.getCurrentX()+tp.x)*pieceWidth, yPixel(highestY+tp.y)+1, dx, dy);
+            gc.setFill(main);
+        }
 
         // Loop through and draw all the blocks; sizes of blocks are calibrated relative to screen size
         for (x=0; x<bWidth; x++) {
