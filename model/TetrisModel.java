@@ -70,6 +70,15 @@ public class TetrisModel implements Serializable {
     }
 
     /**
+     * get the current piece
+     *
+     * @return  currentPiece
+     */
+    public TetrisPiece getpiece() {
+        return this.currentPiece;
+    }
+
+    /**
      * Compute New Position of piece in play based on move type
      * 
      * @param verb type of move to account for
@@ -143,6 +152,15 @@ public class TetrisModel implements Serializable {
         pieceNum = (int) (pieces.length * random.nextDouble());
         TetrisPiece piece	 = pieces[pieceNum];
         return(piece);
+    }
+
+    /**
+     * Get current x
+     *
+     * @return current
+     */
+    public int getCurrentX() {
+        return this.currentX;
     }
 
     /**

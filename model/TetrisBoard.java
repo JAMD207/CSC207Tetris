@@ -1,3 +1,4 @@
+
 // TetrisBoard.java
 package model;
 
@@ -8,7 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Scanner;
 
-/** Represents a Board class for Tetris.  
+/** Represents a Board class for Tetris.
  * Based on the Tetris assignment in the Nifty Assignments Database, authored by Nick Parlante
  */
 public class TetrisBoard implements Serializable{
@@ -145,32 +146,16 @@ public class TetrisBoard implements Serializable{
      * @return the y value where the piece will come to rest
      */
     public int placementHeight(TetrisPiece piece, int x) {
-        int[] ypiece = piece.getLowestYVals();
-        int[] hcalc = new int[ypiece.length];
-        int count = 0;
-        while (count < ypiece.length) {
-            hcalc[count] = this.getColumnHeight(count) - ypiece[count];
-            count = count + 1;
-        }
-        int maxindex = 0;
-        int maxval = hcalc[0];
-        count = 0;
-        while (count < hcalc.length) {
-            if (hcalc[count] > maxval) {
-                maxval = hcalc[count];
-                maxindex = count;
-            }
-            count = count + 1;
-        }
-        return colCounts[maxindex];
-
+        int y = getColumnHeight(x);
+        int[] lowY = piece.getLowestYVals();
+        return y - lowY[0];
     }
 
     /**
      * Attempts to add the body of a piece to the board. Copies the piece blocks into the board grid.
      * Returns ADD_OK for a regular placement, or ADD_ROW_FILLED
-     * for a regular placement that causes at least one row to be filled. 
-     * 
+     * for a regular placement that causes at least one row to be filled.
+     *
      * Error cases:
      * A placement may fail in two ways. First, if part of the piece may fall out
      * of bounds of the board, ADD_OUT_BOUNDS is returned.
@@ -178,7 +163,7 @@ public class TetrisBoard implements Serializable{
      * in which case ADD_BAD is returned.
      * In both error cases, the board may be left in an invalid
      * state. The client can use undo(), to recover the valid, pre-place state.
-     * 
+     *
      * @param piece piece to place
      * @param x placement position, x
      * @param y placement position, y
@@ -226,7 +211,7 @@ public class TetrisBoard implements Serializable{
     /**
      * Deletes rows that are filled all the way across, moving
      * things above down. Returns the number of rows cleared.
-     * 
+     *
      * @return number of rows cleared (useful for scoring)
      */
     public int clearRows() {
@@ -322,7 +307,7 @@ public class TetrisBoard implements Serializable{
 
     /**
      * Print the board
-     * 
+     *
      * @return a string representation of the board (useful for debugging)
      */
     public String toString() {
@@ -341,5 +326,3 @@ public class TetrisBoard implements Serializable{
 
 
 }
-
-
