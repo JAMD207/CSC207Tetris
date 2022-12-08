@@ -1,16 +1,14 @@
 package views;
 
-import model.TetrisModel;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -20,10 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import model.TetrisPiece;
-import model.TetrisPoint;
-
-import java.util.Arrays;
+import model.TetrisModel;
 
 
 /**
@@ -35,7 +30,7 @@ public class TetrisView {
 
     TetrisModel model; //reference to model
     Stage stage;
-    boolean slow;
+    boolean slow; //checks whether the game is in slow mode
     Button startButton, stopButton, loadButton, saveButton, newButton, slowButton; //buttons for functions
     Label scoreLabel = new Label("");
     Label gameModeLabel = new Label("");
@@ -224,12 +219,15 @@ public class TetrisView {
             if (!(slow)) {
                 timeline.setRate(0.2);
                 slow = true;
+                slowButton.setStyle("-fx-background-color: white; -fx-text-fill: black;");
             } else {
                 timeline.setRate(1);
                 slow = false;
+                slowButton.setStyle(buttons);
             }
             borderPane.requestFocus();
-                });
+        });
+
 
         //colour options for the game
         Normalbutton.setOnAction(e -> {
